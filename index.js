@@ -19,22 +19,28 @@ const createReceiver = (opt = {}, cb = noop) => {
 	}
 	if (!isObj(opt)) throw new Error('opt must be an object')
 
-	if ('id' in opt) {
-		if ('string' !== opt.id) throw new Error('opt.id must be a string')
+	if (opt.id !== undefined) {
+		if ('string' !== typeof opt.id) {
+			throw new Error('opt.id must be a string')
+		}
 		if (!validId.test(opt.id)) throw new Error('opt.id must be valid')
 	}
 	const id = opt.id || randomBytes(8).toString('hex')
 
-	if ('name' in opt) {
-		if ('string' !== opt.name) throw new Error('opt.name must be a string')
+	if (opt.name !== undefined) {
+		if ('string' !== typeof opt.name) {
+			throw new Error('opt.name must be a string')
+		}
 		if (!opt.name) throw new Error('opt.name must not be empty')
 		// todo: validate that opt.name is a valid domain name
 	}
 	const name = opt.name || id
 
 	let pPort
-	if ('port' in opt) {
-		if ('number' !== opt.port) throw new Error('opt.port must be a number')
+	if (opt.port !== undefined) {
+		if ('number' !== typeof opt.port) {
+			throw new Error('opt.port must be a number')
+		}
 		pPort = Promise.resolve(opt.port)
 	} else pPort = getPort()
 

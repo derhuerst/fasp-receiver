@@ -25,8 +25,8 @@ const receiver = createReceiver((err, info) => {
 	else console.info(info.name, 'listening on port', info.port)
 })
 
-receiver.on('command', (cmd) => {
-	console.log('command', cmd)
+receiver.on('command', (cmd, args) => {
+	console.log('command', cmd, args)
 })
 receiver.emit('status', {foo: 'bar'})
 ```
