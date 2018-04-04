@@ -3,7 +3,6 @@
 **A receiver for the *Friendly Audio Streaming Protocol*.**
 
 [![npm version](https://img.shields.io/npm/v/fasp-audio-receiver.svg)](https://www.npmjs.com/package/fasp-audio-receiver)
-[![build status](https://api.travis-ci.org/derhuerst/fasp-audio-receiver.svg?branch=master)](https://travis-ci.org/derhuerst/fasp-audio-receiver)
 ![ISC-licensed](https://img.shields.io/github/license/derhuerst/fasp-audio-receiver.svg)
 [![chat with me on Gitter](https://img.shields.io/badge/chat%20with%20me-on%20gitter-512e92.svg)](https://gitter.im/derhuerst)
 [![support me on Patreon](https://img.shields.io/badge/support%20me-on%20patreon-fa7664.svg)](https://patreon.com/derhuerst)
@@ -19,7 +18,17 @@ npm install fasp-audio-receiver
 ## Usage
 
 ```js
-todo
+const createReceiver = require('fasp-audio-receiver')
+
+const receiver = createReceiver((err, info) => {
+	if (err) console.error(err)
+	else console.info(info.name, 'listening on port', info.port)
+})
+
+receiver.on('command', (cmd) => {
+	console.log('command', cmd)
+})
+receiver.emit('status', {foo: 'bar'})
 ```
 
 
