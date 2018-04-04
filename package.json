@@ -4,7 +4,8 @@
 	"version": "0.1.0",
 	"main": "index.js",
 	"files": [
-		"index.js"
+		"index.js",
+		"lib"
 	],
 	"keywords": [
 		"audio",
@@ -21,5 +22,10 @@
 		"node": ">=6"
 	},
 	"dependencies": {
+		"bufferutil": "^3.0.3",
+		"get-port": "^3.2.0",
+		"mdns": "^2.3.4",
+		"utf-8-validate": "^4.0.0",
+		"ws": "^5.1.1"
 	}
 }
