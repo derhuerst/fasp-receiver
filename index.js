@@ -49,10 +49,11 @@ const createReceiver = (opt = {}, cb = noop) => {
 	out.name = name
 
 	const clients = []
-	out.on('status', (status) => {
+	const sendStatus = (status) => {
 		const msg = JSON.stringify(['status', status])
 		for (let client of clients) client.send(msg)
-	})
+	}
+	out.sendStatus = sendStatus
 
 	const onConnection = (client) => {
 		client.on('message', (msg) => {
