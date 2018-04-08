@@ -30,7 +30,7 @@ const receiver = createReceiver({
 receiver.on('command', (cmd, args) => {
 	console.log('command', cmd, args)
 })
-receiver.emit('status', {foo: 'bar'})
+receiver.send('foo', ['bar', 'baz'])
 ```
 
 

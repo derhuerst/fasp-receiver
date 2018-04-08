@@ -19,5 +19,5 @@ receiver.on('command', (cmd) => {
 
 let i = 0
 setInterval(() => {
-	receiver.emit('status', {foo: 'bar', i: i++})
+	receiver.send('foo', ['bar', i++])
 }, 1 * 1000)

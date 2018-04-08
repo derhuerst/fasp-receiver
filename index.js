@@ -51,11 +51,11 @@ const createReceiver = (cfg = {}, cb = noop) => {
 	out.version = version
 
 	const clients = []
-	const sendStatus = (status) => {
-		const msg = JSON.stringify(['status', status])
+	const send = (cmd, args = []) => {
+		const msg = JSON.stringify([cmd].concat(args))
 		for (let client of clients) client.send(msg)
 	}
-	out.sendStatus = sendStatus
+	out.send = send
 
 	const onConnection = (client) => {
 		client.on('message', (msg) => {
