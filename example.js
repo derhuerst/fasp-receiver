@@ -2,7 +2,9 @@
 
 const createReceiver = require('.')
 
-const receiver = createReceiver((err, info) => {
+const receiver = createReceiver({
+	version: 2
+}, (err, info) => {
 	if (err) {
 		console.error(err)
 		return process.exitCode = 1

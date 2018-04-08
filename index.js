@@ -12,41 +12,43 @@ const noop = () => {}
 
 const validId = /^[a-z0-9]{16}$/g
 
-const createReceiver = (opt = {}, cb = noop) => {
-	if ('function' === typeof opt) {
-		cb = opt
-		opt = {}
-	}
-	if (!isObj(opt)) throw new Error('opt must be an object')
+const createReceiver = (cfg = {}, cb = noop) => {
+	if (!isObj(cfg)) throw new Error('cfg must be an object')
 
-	if (opt.id !== undefined) {
-		if ('string' !== typeof opt.id) {
-			throw new Error('opt.id must be a string')
+	if (cfg.id !== undefined) {
+		if ('string' !== typeof cfg.id) {
+			throw new Error('cfg.id must be a string')
 		}
-		if (!validId.test(opt.id)) throw new Error('opt.id must be valid')
+		if (!validId.test(cfg.id)) throw new Error('cfg.id must be valid')
 	}
-	const id = opt.id || randomBytes(8).toString('hex')
+	const id = cfg.id || randomBytes(8).toString('hex')
 
-	if (opt.name !== undefined) {
-		if ('string' !== typeof opt.name) {
-			throw new Error('opt.name must be a string')
+	if (cfg.name !== undefined) {
+		if ('string' !== typeof cfg.name) {
+			throw new Error('cfg.name must be a string')
 		}
-		if (!opt.name) throw new Error('opt.name must not be empty')
-		// todo: validate that opt.name is a valid domain name
+		if (!cfg.name) throw new Error('cfg.name must not be empty')
+		// todo: validate that cfg.name is a valid domain name
 	}
-	const name = opt.name || id
+	const name = cfg.name || id
 
 	let pPort
-	if (opt.port !== undefined) {
-		if ('number' !== typeof opt.port) {
-			throw new Error('opt.port must be a number')
+	if (cfg.port !== undefined) {
+		if ('number' !== typeof cfg.port) {
+			throw new Error('cfg.port must be a number')
 		}
-		pPort = Promise.resolve(opt.port)
+		pPort = Promise.resolve(cfg.port)
 	} else pPort = getPort()
+
+	if ('number' !== typeof cfg.version) {
+		throw new Error('cfg.version must be a number')
+	}
+	const version = cfg.version
 
 	const out = new EventEmitter()
 	out.id = id
 	out.name = name
+	out.version = version
 
 	const clients = []
 	const sendStatus = (status) => {
@@ -93,8 +95,8 @@ const createReceiver = (opt = {}, cb = noop) => {
 			out.server = server
 			server.on('connection', onConnection)
 
-			const info = {id, name, port}
-			if (opt.announce !== false) announce(info)
+			const info = {id, name, port, version}
+			if (cfg.announce !== false) announce(info)
 
 			cb(null, info)
 			out.emit('ready')

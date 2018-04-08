@@ -20,7 +20,9 @@ npm install fasp-audio-receiver
 ```js
 const createReceiver = require('fasp-audio-receiver')
 
-const receiver = createReceiver((err, info) => {
+const receiver = createReceiver({
+	version: 2
+}, (err, info) => {
 	if (err) console.error(err)
 	else console.info(info.name, 'listening on port', info.port)
 })
