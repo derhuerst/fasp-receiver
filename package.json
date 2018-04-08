@@ -1,7 +1,7 @@
 {
-	"name": "fasp-audio-receiver",
+	"name": "fasp-receiver",
 	"description": "A receiver for the Friendly Audio Streaming Protocol.",
-	"version": "0.1.1",
+	"version": "0.2.0",
 	"main": "index.js",
 	"files": [
 		"index.js",
@@ -14,9 +14,9 @@
 		"fasp"
 	],
 	"author": "Jannis R <mail@jannisr.de>",
-	"homepage": "https://github.com/derhuerst/fasp-audio-receiver",
-	"repository": "derhuerst/fasp-audio-receiver",
-	"bugs": "https://github.com/derhuerst/fasp-audio-receiver/issues",
+	"homepage": "https://github.com/derhuerst/fasp-receiver",
+	"repository": "derhuerst/fasp-receiver",
+	"bugs": "https://github.com/derhuerst/fasp-receiver/issues",
 	"license": "ISC",
 	"engines": {
 		"node": ">=6"
