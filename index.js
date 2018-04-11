@@ -86,7 +86,7 @@ const createReceiver = (cfg = {}, cb = noop) => {
 	.then((port) => {
 		out.port = port
 
-		createServer(port, (err, server) => {
+		createServer(port, (err, server, httpServer) => {
 			if (err) {
 				cb(err)
 				return out.emit('error', err)
@@ -98,7 +98,7 @@ const createReceiver = (cfg = {}, cb = noop) => {
 			const info = {id, name, port, version}
 			if (cfg.announce !== false) announce(info)
 
-			cb(null, info)
+			cb(null, info, server, httpServer)
 			out.emit('ready')
 		})
 	})
