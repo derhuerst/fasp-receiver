@@ -4,6 +4,7 @@ const {randomBytes} = require('crypto')
 const getPort = require('get-port')
 const {EventEmitter} = require('events')
 const {Server} = require('ws')
+const {URL} = require('url')
 
 const announce = require('./lib/announce')
 const runServer = require('./lib/server')
@@ -79,7 +80,20 @@ const createReceiver = (cfg = {}, cb = noop) => {
 		clients.push(client)
 	}
 
-	const wsServer = new Server({noServer: true})
+	const wsOpts = {noServer: true}
+	if (cfg.origins !== undefined) {
+		if (!Array.isArray(cfg.origins)) {
+			throw new Error('cfg.origins must be an array.')
+		}
+		const origins = cfg.origins.map(o => o.toLowerCase())
+		wsOpts.verifyClient = ({origin}, cb) => {
+			if (origin === undefined) return cb(true)
+			if (origins.includes(new URL(origin).host)) return cb(true)
+			cb(false, 403, 'Invalid Origin.')
+		}
+	}
+
+	const wsServer = new Server(wsOpts)
 	wsServer.on('connection', onConnection)
 
 	const onHttpServer = (httpServer) => {
