@@ -1,7 +1,7 @@
 {
 	"name": "fasp-receiver",
 	"description": "A receiver for the Friendly Audio Streaming Protocol.",
-	"version": "0.3.0",
+	"version": "1.0.0",
 	"main": "index.js",
 	"files": [
 		"index.js",
