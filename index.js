@@ -3,9 +3,10 @@
 const {randomBytes} = require('crypto')
 const getPort = require('get-port')
 const {EventEmitter} = require('events')
+const {Server} = require('ws')
 
 const announce = require('./lib/announce')
-const createServer = require('./lib/server')
+const runServer = require('./lib/server')
 
 const isObj = o => o !== null && 'object' === typeof o && !Array.isArray(o)
 const noop = () => {}
@@ -32,23 +33,19 @@ const createReceiver = (cfg = {}, cb = noop) => {
 	}
 	const name = cfg.name || id
 
-	let pPort
-	if (cfg.port !== undefined) {
-		if ('number' !== typeof cfg.port) {
-			throw new Error('cfg.port must be a number')
-		}
-		pPort = Promise.resolve(cfg.port)
-	} else pPort = getPort()
+	if (cfg.port !== undefined && 'number' !== typeof cfg.port) {
+		throw new Error('cfg.port must be a number')
+	}
 
 	if ('number' !== typeof cfg.version) {
 		throw new Error('cfg.version must be a number')
 	}
 	const version = cfg.version
 
+
+
 	const out = new EventEmitter()
-	out.id = id
-	out.name = name
-	out.version = version
+	const info = out.info = {id, name, version, port: null}
 
 	const clients = []
 	const send = (cmd, args = []) => {
@@ -82,30 +79,36 @@ const createReceiver = (cfg = {}, cb = noop) => {
 		clients.push(client)
 	}
 
-	pPort
-	.then((port) => {
-		out.port = port
+	const wsServer = new Server({noServer: true})
+	wsServer.on('connection', onConnection)
 
-		createServer(port, (err, server, httpServer) => {
-			if (err) {
-				cb(err)
-				return out.emit('error', err)
-			}
-
-			out.server = server
-			server.on('connection', onConnection)
-
-			const info = {id, name, port, version}
-			if (cfg.announce !== false) announce(info)
-
-			cb(null, info, server, httpServer)
-			out.emit('ready')
+	const onHttpServer = (httpServer) => {
+		httpServer.on('upgrade', (req, socket, head) => {
+			if (wsServer.shouldHandle(req)) {
+				wsServer.handleUpgrade(req, socket, head, (connection) => {
+					wsServer.emit('connection', connection)
+				})
+			} else socket.destroy()
 		})
-	})
-	.catch((err) => {
-		cb(err)
-		out.emit('error', err)
-	})
+
+		info.port = httpServer.address().port
+		if (cfg.announce !== false) announce(info)
+
+		cb(null, info, wsServer, httpServer)
+		out.emit('ready')
+	}
+
+	if (cfg.server !== undefined) {
+		process.nextTick(onHttpServer, cfg.server)
+	} else {
+		(cfg.port !== undefined ? Promise.resolve(cfg.port) : getPort())
+		.then(runServer)
+		.then(onHttpServer)
+		.catch((err) => {
+			cb(err)
+			out.emit('error', err)
+		})
+	}
 
 	return out
 }
