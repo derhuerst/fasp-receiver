@@ -1,7 +1,7 @@
 {
 	"name": "fasp-receiver",
 	"description": "A receiver for the Friendly Audio Streaming Protocol.",
-	"version": "1.1.0",
+	"version": "2.0.0",
 	"main": "index.js",
 	"files": [
 		"index.js",
@@ -19,13 +19,13 @@
 	"bugs": "https://github.com/derhuerst/fasp-receiver/issues",
 	"license": "ISC",
 	"engines": {
-		"node": ">=6"
+		"node": ">=8"
 	},
 	"dependencies": {
 		"bufferutil": "^4.0.1",
-		"get-port": "^4.2.0",
+		"get-port": "^5.0.0",
 		"mdns": "^2.5.1",
 		"utf-8-validate": "^5.0.2",
-		"ws": "^6.2.1"
+		"ws": "^7.2.0"
 	}
 }
