@@ -47,6 +47,7 @@ const createReceiver = (cfg = {}, cb = noop) => {
 
 	const out = new EventEmitter()
 	const info = out.info = {id, name, version, port: null}
+	out.stop = () => {}
 
 	const clients = []
 	const send = (cmd, args = []) => {
@@ -122,7 +123,10 @@ const createReceiver = (cfg = {}, cb = noop) => {
 		})
 
 		info.port = httpServer.address().port
-		if (cfg.announce !== false) announce(info)
+		if (cfg.announce !== false) {
+			const stopAnnouncing = announce(info)
+			out.stop = stopAnnouncing
+		}
 
 		cb(null, info, wsServer, httpServer)
 		out.emit('ready')
