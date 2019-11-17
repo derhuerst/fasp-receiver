@@ -81,15 +81,31 @@ const createReceiver = (cfg = {}, cb = noop) => {
 	}
 
 	const wsOpts = {noServer: true}
-	if (cfg.origins !== undefined) {
-		if (!Array.isArray(cfg.origins)) {
-			throw new Error('cfg.origins must be an array.')
-		}
-		const origins = cfg.origins.map(o => o.toLowerCase())
-		wsOpts.verifyClient = ({origin}, cb) => {
-			if (origin === undefined) return cb(true)
-			if (origins.includes(new URL(origin).host)) return cb(true)
-			cb(false, 403, 'Invalid Origin.')
+	if (cfg.origins !== undefined && !Array.isArray(cfg.origins)) {
+		throw new Error('cfg.origins must be an array.')
+	}
+	if (
+		cfg.verifyRemoteAddress !== undefined &&
+		'function' !== typeof cfg.verifyRemoteAddress
+	) {
+		throw new Error('cfg.verifyRemoteAddress must be a function.')
+	}
+
+	wsOpts.verifyClient = ({req, origin}, cb) => {
+		if (
+			cfg.origins &&
+			origin !== undefined &&
+			!origins.includes(new URL(origin).host)
+		) return cb(false, 403, 'Invalid Origin.')
+
+		if (!cfg.verifyRemoteAddress) return cb(true)
+		try {
+			cfg.verifyRemoteAddress(req.socket.remoteAddress, (isValid) => {
+				if (isValid) cb(true)
+				else cb(false, 403, 'Invalid remote address.')
+			})
+		} catch (err) {
+			cb(false, err.statusCode || 500, err.message)
 		}
 	}
 
