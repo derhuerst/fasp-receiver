@@ -96,7 +96,7 @@ const createReceiver = (cfg = {}, cb = noop) => {
 		if (
 			cfg.origins &&
 			origin !== undefined &&
-			!origins.includes(new URL(origin).host)
+			!cfg.origins.includes(new URL(origin).host)
 		) return cb(false, 403, 'Invalid Origin.')
 
 		if (!cfg.verifyRemoteAddress) return cb(true)
